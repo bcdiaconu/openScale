@@ -28,6 +28,12 @@ public class StringUtils {
     }
 
     public static String[] splitByWhitespace(final String value) {
+        if(null == value)
+            return null;
+
+        if(isNullOrWhitespace(value))
+            return null;
+
         return value.trim().split(String.format("[%s]+", WHITESPACE_CHARS));
     }
 
