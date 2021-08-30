@@ -2,6 +2,7 @@ package com.health.openscale.core.utils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 
 /***************************************************************************
@@ -27,15 +28,28 @@ public class StringUtils {
     public static final String EMPTY_STRING = "";
 
     public static boolean isNullOrWhitespace(final String value) {
-        //TODO: replace .chars() as requires at least sdk level 24
-        return null == value || value.isEmpty() || value.chars().allMatch(Character::isWhitespace);
+        if (null == value || value.isEmpty())
+            return true;
+
+        HashSet<Character> setOfChars = new HashSet<>();
+
+        for (char character : WHITESPACE_CHARS.toCharArray()) {
+            setOfChars.add(character);
+        }
+
+        for (int i = 0; i < value.length(); i++) {
+            if (!setOfChars.contains(value.charAt(i)))
+                return false;
+        }
+
+        return true;
     }
 
     public static String[] splitByWhitespace(final String value) {
-        if(null == value)
+        if (null == value)
             return null;
 
-        if(isNullOrWhitespace(value))
+        if (isNullOrWhitespace(value))
             return null;
 
         String[] splitted = value.trim().split(String.format("[%s]+", WHITESPACE_CHARS));
@@ -44,7 +58,7 @@ public class StringUtils {
 
         listOfWords.removeIf(s -> s.equals(EMPTY_STRING));
 
-        return listOfWords.toArray(new String[listOfWords.size()]);
+        return listOfWords.toArray(new String[0]);
     }
 
     public static String generateStringWithRepeatingChar(final int count) {
@@ -61,6 +75,5 @@ public class StringUtils {
             stringBuilder.append(value);
 
         return stringBuilder.toString();
-//        return new String(new char[count]).replace('\0', value);
     }
 }

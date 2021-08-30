@@ -34,6 +34,15 @@ public class StringUtilsTest {
         stringTest = new String(" \f\t\n\r\u00A0\u2007\u202F\u000B\u001C\u001D\u001E\u001F");
         assertTrue(StringUtils.isNullOrWhitespace(stringTest));
 
+        stringTest = new String(" \f\t\n\r\u00A0\u2007\u202F\u000B\u001C\u001D\u001E\u001Fz");
+        assertFalse(StringUtils.isNullOrWhitespace(stringTest));
+
+        stringTest = new String(" \f\t\n\r\u00A0M\u2007\u202F\u000B\u001C\u001D\u001E\u001F");
+        assertFalse(StringUtils.isNullOrWhitespace(stringTest));
+
+        stringTest = new String("6 \f\t\n\r\u00A0\u2007\u202F\u000B\u001C\u001D\u001E\u001F");
+        assertFalse(StringUtils.isNullOrWhitespace(stringTest));
+
         stringTest = new String("\n\t\r  d  \t");
         assertFalse(StringUtils.isNullOrWhitespace(stringTest));
 
@@ -49,22 +58,25 @@ public class StringUtilsTest {
         String stringTest = new String("\n\t\r    \t1 2\t\t\n3");
         String[] stringsSplitted = StringUtils.splitByWhitespace(stringTest);
         String[] expected = new String[]{"1", "2", "3"};
+        assertEquals(expected.length, stringsSplitted.length);
         assertArrayEquals(expected, stringsSplitted);
 
         stringTest = new String("\n\t\r    \t1 2\t\t\n3 \t\n\r");
         stringsSplitted = StringUtils.splitByWhitespace(stringTest);
         expected = new String[]{"1", "2", "3"};
+        assertEquals(expected.length, stringsSplitted.length);
         assertArrayEquals(expected, stringsSplitted);
 
         stringTest = new String("1 2\t\t\n3 \t\n\r");
         stringsSplitted = StringUtils.splitByWhitespace(stringTest);
         expected = new String[]{"1", "2", "3"};
+        assertEquals(expected.length, stringsSplitted.length);
         assertArrayEquals(expected, stringsSplitted);
 
         stringTest = new String(" \f\t\n\r\u00A0\u2007\u202F\u000B\u001C\u001D\u001E\u001F1 \f\t\n\r\u00A0\u2007\u202F\u000B\u001C\u001D\u001E\u001F2 \f\t\n\r\u00A0\u2007\u202F\u000B\u001C\u001D\u001E\u001F");
         stringsSplitted = StringUtils.splitByWhitespace(stringTest);
         expected = new String[]{"1", "2"};
-        assertEquals(2, stringsSplitted.length);
+        assertEquals(expected.length, stringsSplitted.length);
         assertArrayEquals(expected, stringsSplitted);
 
         stringTest = null;
