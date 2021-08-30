@@ -43,6 +43,9 @@ public class StringUtilsTest {
         stringTest = new String("6 \f\t\n\r\u00A0\u2007\u202F\u000B\u001C\u001D\u001E\u001F");
         assertFalse(StringUtils.isNullOrWhitespace(stringTest));
 
+        stringTest = new String(" \f\t\n\r\u00A0s46\u2007\u202Fdafad\u000B\u001C\u001D\u001E\u001F");
+        assertFalse(StringUtils.isNullOrWhitespace(stringTest));
+
         stringTest = new String("\n\t\r  d  \t");
         assertFalse(StringUtils.isNullOrWhitespace(stringTest));
 
