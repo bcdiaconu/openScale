@@ -1,5 +1,9 @@
 package com.health.openscale.core.utils;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 /***************************************************************************
  * Copyright (C) 2021  Diaconu Cosmin
  *
@@ -34,7 +38,13 @@ public class StringUtils {
         if(isNullOrWhitespace(value))
             return null;
 
-        return value.trim().split(String.format("[%s]+", WHITESPACE_CHARS));
+        String[] splitted = value.trim().split(String.format("[%s]+", WHITESPACE_CHARS));
+
+        List<String> listOfWords = new ArrayList<>(Arrays.asList(splitted));
+
+        listOfWords.removeIf(s -> s.equals(EMPTY_STRING));
+
+        return listOfWords.toArray(new String[listOfWords.size()]);
     }
 
     public static String generateStringWithRepeatingChar(final int count) {
