@@ -819,7 +819,7 @@ public class BluetoothStandardWeightProfile extends BluetoothCommunication {
         int userId = this.selectedUser.getId();
         String userIndex = String.valueOf(getUserScaleIndex(userId));
 
-        if (StringUtils.EMPTY_STRING == userIndex)
+        if (userIndex.equals(StringUtils.EMPTY_STRING))
             return StringUtils.generateStringWithRepeatingChar(size);
 
         if (1 == size)
