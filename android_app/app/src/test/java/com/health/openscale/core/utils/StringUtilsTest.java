@@ -82,6 +82,17 @@ public class StringUtilsTest {
         assertEquals(expected.length, stringsSplitted.length);
         assertArrayEquals(expected, stringsSplitted);
 
+        stringTest = new String("adgg");
+        stringsSplitted = StringUtils.splitByWhitespace(stringTest);
+        expected = new String[]{"adgg"};
+        assertEquals(expected.length, stringsSplitted.length);
+        assertArrayEquals(expected, stringsSplitted);
+
+        stringTest = new String(" \f\t\n\r\u00A0\u2007\u202F\u000B\u001C\u001D\u001E\u001F");
+        stringsSplitted = StringUtils.splitByWhitespace(stringTest);
+        expected = null;
+        assertArrayEquals(expected, stringsSplitted);
+
         stringTest = null;
         stringsSplitted = StringUtils.splitByWhitespace(stringTest);
         expected = null;

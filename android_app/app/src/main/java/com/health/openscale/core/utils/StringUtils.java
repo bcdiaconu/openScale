@@ -1,9 +1,9 @@
 package com.health.openscale.core.utils;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.List;
+import java.util.Set;
+import java.util.Vector;
 
 /***************************************************************************
  * Copyright (C) 2021  Diaconu Cosmin
@@ -23,7 +23,8 @@ import java.util.List;
  ***************************************************************************/
 
 public class StringUtils {
-    private static final String WHITESPACE_CHARS = " \f\t\n\r\u00A0\u2007\u202F\u000B\u001C\u001D\u001E\u001F";
+    private static final Set<Character> SET_OF_WHITESPACE_CHARS = new HashSet<>(Arrays.asList
+            (' ', '\f', '\t', '\n', '\r', '\u00A0', '\u2007', '\u202F', '\u000B', '\u001C', '\u001D', '\u001E', '\u001F'));
 
     public static final String EMPTY_STRING = "";
 
@@ -31,14 +32,8 @@ public class StringUtils {
         if (null == value || value.isEmpty())
             return true;
 
-        HashSet<Character> setOfChars = new HashSet<>();
-
-        for (char character : WHITESPACE_CHARS.toCharArray()) {
-            setOfChars.add(character);
-        }
-
         for (int i = 0; i < value.length(); i++) {
-            if (!setOfChars.contains(value.charAt(i)))
+            if (!SET_OF_WHITESPACE_CHARS.contains(value.charAt(i)))
                 return false;
         }
 
@@ -49,19 +44,23 @@ public class StringUtils {
         if (null == value)
             return null;
 
-        if (isNullOrWhitespace(value))
-            return null;
+        Vector<String> words = new Vector<>();
 
-        String[] splitted = value.trim().split(String.format("[%s]+", WHITESPACE_CHARS));
+        int startWord =0;
 
-        List<String> listOfWords = new ArrayList<>(Arrays.asList(splitted));
+        while (startWord < value.length()) {
+            startWord = getNextNonWhitespaceIndex(value, startWord);
+            int endWord = getNextWhitespaceIndex(value, startWord);
 
-        listOfWords.removeIf(s -> s.equals(EMPTY_STRING));
+            if(startWord < endWord)
+                words.add(value.substring(startWord, endWord));
 
-        if(listOfWords.isEmpty())
-            return null;
+            startWord = endWord;
+        }
 
-        return listOfWords.toArray(new String[0]);
+        return words.isEmpty()
+                ? null
+                : words.toArray(new String[0]);
     }
 
     public static String generateStringWithRepeatingChar(final int count) {
@@ -78,5 +77,19 @@ public class StringUtils {
             stringBuilder.append(value);
 
         return stringBuilder.toString();
+    }
+
+    private static int getNextWhitespaceIndex(String value, int startIndex) {
+        while (startIndex < value.length() && !SET_OF_WHITESPACE_CHARS.contains(value.charAt(startIndex))) {
+            startIndex++;
+        }
+        return startIndex;
+    }
+
+    private static int getNextNonWhitespaceIndex(String value, int startIndex) {
+        while (startIndex < value.length() && SET_OF_WHITESPACE_CHARS.contains(value.charAt(startIndex))) {
+            startIndex++;
+        }
+        return startIndex;
     }
 }
