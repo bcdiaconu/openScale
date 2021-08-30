@@ -76,6 +76,12 @@ public class StringUtilsTest {
         assertEquals(expected.length, stringsSplitted.length);
         assertArrayEquals(expected, stringsSplitted);
 
+        stringTest = new String("12\t\t\n3 \t\n\r");
+        stringsSplitted = StringUtils.splitByWhitespace(stringTest);
+        expected = new String[]{"12", "3"};
+        assertEquals(expected.length, stringsSplitted.length);
+        assertArrayEquals(expected, stringsSplitted);
+
         stringTest = new String(" \f\t\n\r\u00A0\u2007\u202F\u000B\u001C\u001D\u001E\u001F1 \f\t\n\r\u00A0\u2007\u202F\u000B\u001C\u001D\u001E\u001F2 \f\t\n\r\u00A0\u2007\u202F\u000B\u001C\u001D\u001E\u001F");
         stringsSplitted = StringUtils.splitByWhitespace(stringTest);
         expected = new String[]{"1", "2"};
