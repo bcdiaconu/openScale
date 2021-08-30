@@ -58,6 +58,9 @@ public class StringUtils {
 
         listOfWords.removeIf(s -> s.equals(EMPTY_STRING));
 
+        if(listOfWords.isEmpty())
+            return null;
+
         return listOfWords.toArray(new String[0]);
     }
 
