@@ -122,6 +122,15 @@ public class BluetoothFactory {
         if (deviceName.equals("ADV")) {
             return new BluetoothOKOK(context);
         }
+        if (deviceName.equals("BF105")) {
+            return new BluetoothBeurerBF105(context);
+        }
+        if (deviceName.equals("BF600") || deviceName.equals("BF850")) {
+            return new BluetoothBeurerBF600(context, deviceName);
+        }
+        if (deviceName.equals("SBF77") || deviceName.equals("BF950")) {
+            return new BluetoothSwpSBF77(context, deviceName);
+        }
         return null;
     }
 }
