@@ -1,5 +1,10 @@
 package com.health.openscale.core.utils;
 
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.Vector;
+
 /***************************************************************************
  * Copyright (C) 2021  Diaconu Cosmin
  *
@@ -17,31 +22,74 @@ package com.health.openscale.core.utils;
  *    along with this program.  If not, see <http://www.gnu.org/licenses/>
  ***************************************************************************/
 
-public static class StringUtils {
-    public static final string EMTPY = "";
+public class StringUtils {
+    private static final Set<Character> SET_OF_WHITESPACE_CHARS = new HashSet<>(Arrays.asList
+            (' ', '\f', '\t', '\n', '\r', '\u00A0', '\u2007', '\u202F', '\u000B', '\u001C', '\u001D', '\u001E', '\u001F'));
 
-    public static bool isNullOrWhitespace(final String value)
-    {
-        return null == value || value.isEmpty() || value.chars().allMatch(Character::isWhitespace);
+    public static final String EMPTY_STRING = "";
+
+    public static boolean isNullOrWhitespace(final String value) {
+        if (null == value || value.isEmpty())
+            return true;
+
+        for (int i = 0; i < value.length(); i++) {
+            if (!SET_OF_WHITESPACE_CHARS.contains(value.charAt(i)))
+                return false;
+        }
+
+        return true;
     }
 
-    public static string[] splitByWhitespace(final String value)
-    {
-        return value.trim().split("[\f\s\t\n\r\u00A0\u2007\u202F\u000B\u001C\u001D\u001E\u001F’]+");
+    public static String[] splitByWhitespace(final String value) {
+        if (null == value)
+            return null;
+
+        Vector<String> words = new Vector<>();
+
+        int startWord =0;
+
+        while (startWord < value.length()) {
+            startWord = getNextNonWhitespaceIndex(value, startWord);
+            int endWord = getNextWhitespaceIndex(value, startWord);
+
+            if(startWord < endWord)
+                words.add(value.substring(startWord, endWord));
+
+            startWord = endWord;
+        }
+
+        return words.isEmpty()
+                ? null
+                : words.toArray(new String[0]);
     }
 
-    public static string generateStringWithRepeatingChar(final int count, final char value = ' ')
-    {
-        if(count < 1)
-            return EMTPY;
+    public static String generateStringWithRepeatingChar(final int count) {
+        return generateStringWithRepeatingChar(count, ' ');
+    }
 
-        var stringBuilder = new StringBuilder();
+    public static String generateStringWithRepeatingChar(final int count, final char value) {
+        if (count < 1)
+            return EMPTY_STRING;
 
-        for(var i = 0; i < count; i++)
-            stringBuilder += value;
+        StringBuilder stringBuilder = new StringBuilder();
+
+        for (int i = 0; i < count; i++)
+            stringBuilder.append(value);
 
         return stringBuilder.toString();
-//        return new String(new char[count]).replace('\0', value);
     }
 
+    private static int getNextWhitespaceIndex(String value, int startIndex) {
+        while (startIndex < value.length() && !SET_OF_WHITESPACE_CHARS.contains(value.charAt(startIndex))) {
+            startIndex++;
+        }
+        return startIndex;
+    }
+
+    private static int getNextNonWhitespaceIndex(String value, int startIndex) {
+        while (startIndex < value.length() && SET_OF_WHITESPACE_CHARS.contains(value.charAt(startIndex))) {
+            startIndex++;
+        }
+        return startIndex;
+    }
 }
