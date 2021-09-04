@@ -28,8 +28,6 @@ import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.util.Pair;
 
-import androidx.room.util.StringUtil;
-
 import com.health.openscale.R;
 import com.health.openscale.core.OpenScale;
 import com.health.openscale.core.datatypes.ScaleMeasurement;
