@@ -848,6 +848,12 @@ public class BluetoothStandardWeightProfile extends BluetoothCommunication {
             stringBuilder.append('P');
 
         stringBuilder.append(userIndex);
+
+        final int padding = size - stringBuilder.length();
+
+        if(0 < padding)
+            stringBuilder.append(StringUtils.repeat(StringUtils.SPACE, padding));
+
         stringBuilder.setLength(size);
 
         return stringBuilder.toString();
@@ -864,6 +870,11 @@ public class BluetoothStandardWeightProfile extends BluetoothCommunication {
         for (int i = 0; i < size && i < names.length; i++)
             if (false == StringUtils.isAnyBlank(names[i]))
                 initialsBuilder.append(names[i].charAt(0));
+
+        final int padding = size - initialsBuilder.length();
+
+        if(0 < padding)
+            initialsBuilder.append(StringUtils.repeat(StringUtils.SPACE, padding));
 
         initialsBuilder.setLength(size);
 
