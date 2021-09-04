@@ -35,6 +35,8 @@ import com.health.openscale.core.datatypes.ScaleUser;
 import com.health.openscale.core.utils.Converters;
 import com.welie.blessed.BluetoothBytesParser;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.text.DateFormat;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -823,29 +825,59 @@ public class BluetoothStandardWeightProfile extends BluetoothCommunication {
         chooseScaleUserUi(choices);
     }
 
-    protected String getInitials(String fullName) {
-        if (fullName == null || fullName.isEmpty() || fullName.chars().allMatch(Character::isWhitespace)) {
-            return getDefaultInitials();
-        }
-        return buildInitialsStringFrom(fullName).toUpperCase();
+    protected String getInitials(final String fullName, final int size) {
+        if (0 == size)
+            return StringUtils.EMPTY;
+
+        if (StringUtils.isAnyBlank(fullName))
+            return getDefaultInitials(size);
+
+        return buildInitialsStringFrom(fullName, size).toUpperCase();
     }
 
-    private String getDefaultInitials() {
+    private String getDefaultInitials(final int size) {
+        if (1 > size)
+            return StringUtils.EMPTY;
+
         int userId = this.selectedUser.getId();
-        int userIndex = getUserScaleIndex(userId);
-        return "P" + userIndex + " ";
+        String userIndex = String.valueOf(getUserScaleIndex(userId));
+
+        StringBuilder stringBuilder = new StringBuilder();
+
+        if (userIndex.length() < size)
+            stringBuilder.append('P');
+
+        stringBuilder.append(userIndex);
+
+        final int padding = size - stringBuilder.length();
+
+        if(0 < padding)
+            stringBuilder.append(StringUtils.repeat(StringUtils.SPACE, padding));
+
+        stringBuilder.setLength(size);
+
+        return stringBuilder.toString();
     }
 
-    private String buildInitialsStringFrom(String fullName) {
-        String[] name = fullName.trim().split(" +");
-        String initials = "";
-        for (int i = 0; i < 3; i++) {
-            if (i < name.length && name[i] != "") {
-                initials += name[i].charAt(0);
-            } else {
-                initials += " ";
-            }
-        }
-        return initials;
+    private String buildInitialsStringFrom(final String fullName, final int size) {
+        String[] names = StringUtils.split(fullName);
+
+        if (null == names || 0 == names.length)
+            return StringUtils.repeat(StringUtils.SPACE, size);
+
+        StringBuilder initialsBuilder = new StringBuilder();
+
+        for (int i = 0; i < size && i < names.length; i++)
+            if (false == StringUtils.isAnyBlank(names[i]))
+                initialsBuilder.append(names[i].charAt(0));
+
+        final int padding = size - initialsBuilder.length();
+
+        if(0 < padding)
+            initialsBuilder.append(StringUtils.repeat(StringUtils.SPACE, padding));
+
+        initialsBuilder.setLength(size);
+
+        return initialsBuilder.toString();
     }
 }
