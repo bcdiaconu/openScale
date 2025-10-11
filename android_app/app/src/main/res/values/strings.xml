@@ -96,6 +96,12 @@
     <string name="user_settings_content_description_delete">Delete user</string>
     <string name="user_settings_content_description_add_user">Add new user</string>
     <string name="user_detail_content_description_change_unit">Change unit</string>
+    <string name="user_detail_sync_with_scale">Sync with Scale</string>
+    <string name="user_detail_sync_with_scale_desc">Connect user to Bluetooth scale</string>
+    <string name="user_sync_no_scale_connected">No Bluetooth scale connected. Please connect a scale first.</string>
+    <string name="user_sync_scale_not_supported">This scale does not support user synchronization.</string>
+    <string name="user_sync_initiated">User synchronization initiated. Please follow the scale instructions.</string>
+    <string name="user_sync_save_first">Please save the user before syncing with the scale.</string>
 
     <!-- Measurement CRUD & Operations -->
     <string name="success_measurement_updated">Measurement successfully updated</string>

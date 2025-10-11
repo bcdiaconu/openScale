@@ -36,6 +36,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddCircleOutline
+import androidx.compose.material.icons.automirrored.filled.BluetoothSearching
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Save
 import androidx.compose.material.icons.filled.UnfoldMore
@@ -116,7 +117,8 @@ fun UserDetailScreen(
     navController: NavController,
     userId: Int,
     sharedViewModel: SharedViewModel,
-    settingsViewModel: SettingsViewModel
+    settingsViewModel: SettingsViewModel,
+    bluetoothViewModel: BluetoothViewModel
 ) {
     val isEdit = userId != -1
 
@@ -124,6 +126,11 @@ fun UserDetailScreen(
     val user by remember(userId) {
         mutableStateOf(sharedViewModel.allUsers.value.find { it.id == userId })
     }
+
+    // Bluetooth state
+    val savedDevice by bluetoothViewModel.savedDevice.collectAsState()
+    val savedDeviceSupport by bluetoothViewModel.savedDeviceSupport.collectAsState()
+    val connectedDeviceAddress by bluetoothViewModel.connectedDeviceAddress.collectAsState()
 
     var selectedIcon by remember { mutableStateOf(user?.icon ?: UserIcon.IC_DEFAULT) }
     var name by remember { mutableStateOf(user?.name.orEmpty()) }
@@ -315,21 +322,69 @@ fun UserDetailScreen(
     }
 
 
+    /**
+     * Initiates user synchronization with the Bluetooth scale.
+     */
+    fun syncUserWithScale() {
+        if (savedDevice == null) {
+            Toast.makeText(context, R.string.user_sync_no_scale_connected, Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        val deviceSupport = savedDeviceSupport
+        if (deviceSupport == null || !deviceSupport.capabilities.contains(com.health.openscale.core.bluetooth.scales.DeviceCapability.USER_SYNC)) {
+            Toast.makeText(context, R.string.user_sync_scale_not_supported, Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        if (!isEdit || user == null) {
+            Toast.makeText(context, R.string.user_sync_save_first, Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        // Connect to scale and initiate user sync
+        Toast.makeText(context, R.string.user_sync_initiated, Toast.LENGTH_SHORT).show()
+        bluetoothViewModel.connectToSavedDevice()
+    }
+
+
     // --- TopBar Save Action ---
     LaunchedEffect(key1 = userId) {
         sharedViewModel.setTopBarTitle(
             if (isEdit) context.getString(R.string.user_detail_edit_user_title)
             else context.getString(R.string.user_detail_add_user_title)
         )
-        sharedViewModel.setTopBarAction(
-            TopBarAction(icon = Icons.Default.Save, onClick = {
-                if (!isEdit) {
-                    addUser()
-                } else {
-                    updateUser()
+
+        // Build top bar actions
+        val actions = mutableListOf<TopBarAction>()
+
+        // Save button (always present)
+        actions.add(
+            TopBarAction(
+                icon = Icons.Default.Save,
+                contentDescription = context.getString(R.string.action_save_measurement),
+                onClick = {
+                    if (!isEdit) {
+                        addUser()
+                    } else {
+                        updateUser()
+                    }
                 }
-            })
+            )
         )
+
+        // Bluetooth sync button (only for existing users)
+        if (isEdit) {
+            actions.add(
+                TopBarAction(
+                    icon = Icons.AutoMirrored.Filled.BluetoothSearching,
+                    contentDescription = context.getString(R.string.user_detail_sync_with_scale_desc),
+                    onClick = { syncUserWithScale() }
+                )
+            )
+        }
+
+        sharedViewModel.setTopBarActions(actions)
     }
 
     val scrollState = rememberScrollState()
@@ -623,7 +678,7 @@ fun UserDetailScreen(
                 if (goalValueFloat == null) {
                     if (goalDialogContextData.existingGoalForDialog == null) {  return@UserGoalDialog }
                     else {
-                        pendingUserGoals = pendingUserGoals.filterNot { it.measurementTypeId == measurementTypeId && it.userId == goalDialogContextData.existingGoalForDialog!!.userId }
+                        pendingUserGoals = pendingUserGoals.filterNot { ug -> ug.measurementTypeId == it && ug.userId == goalDialogContextData.existingGoalForDialog!!.userId }
                         sharedViewModel.dismissUserGoalDialogWithContext()
                         return@UserGoalDialog
                     }

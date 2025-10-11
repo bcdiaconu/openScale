@@ -470,7 +470,8 @@ fun AppNavigation(sharedViewModel: SharedViewModel) {
                         modifier = Modifier.padding(8.dp), // Padding around the snackbar.
                         shape = RoundedCornerShape(8.dp), // Rounded corners for the snackbar.
                         containerColor = Blue, // Custom background color.
-                        contentColor = White,    // Custom text and icon color.
+                        contentColor = White,
+                        // Custom text and icon color.
                     ) {
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Icon(
@@ -614,7 +615,8 @@ fun AppNavigation(sharedViewModel: SharedViewModel) {
                             navController = navController,
                             userId = userId,
                             sharedViewModel = sharedViewModel,
-                            settingsViewModel = settingsViewModel
+                            settingsViewModel = settingsViewModel,
+                            bluetoothViewModel = bluetoothViewModel
                         )
                     }
                     composable(Routes.MEASUREMENT_TYPES) {
